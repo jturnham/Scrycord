@@ -25,7 +25,11 @@ bot.on('message', function (user, userID, channelID, message, evt) {
 
         args = args.splice(1);
         switch(cmd) {
-
+            case 'card':
+            bot.sendMessage({
+                  to: channelID,
+                  message: 'This command is not supported yet. Please check back later!'
+              });
             break;
 
          }
