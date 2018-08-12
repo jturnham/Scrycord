@@ -1,0 +1,8 @@
+{
+  "name": "Scrycord",
+  "version": "0.0.1",
+  "description": "Discord bot to display Scryfall data for Magic: The Gathering cards",
+  "main": "bot.js",
+  "author": "JTurnham",
+  "dependencies": {}
+}
