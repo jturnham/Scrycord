@@ -1,6 +1,7 @@
 var Discord = require('discord.io');
 var logger = require('winston');
 var auth = require('./auth.json');
+const https = require('https');
 // Configure logger settings
 logger.remove(logger.transports.Console);
 logger.add(new logger.transports.Console, {
@@ -26,10 +27,36 @@ bot.on('message', function (user, userID, channelID, message, evt) {
         args = args.splice(1);
         switch(cmd) {
             case 'card':
-            bot.sendMessage({
-                  to: channelID,
-                  message: 'This command is not supported yet. Please check back later!'
+              var cardName = args.join('+');
+              if (cardName == undefined) {
+                bot.sendMessage({
+                      to: channelID,
+                      message: 'You must provide a card name to search for.'
+                  });
+              }
+              else {
+              https.get('https://api.scryfall.com/cards/named?fuzzy=' + cardName, (res) => {
+                logger.info('Connected to Scryfall. Searching for ' + cardName);
+                logger.info('Headers: ' + res.headers);
+                var cardObjJson = '';
+                res.on('data', (d) => {
+                  cardObjJson += d;
+                });
+                res.on('end', (cardObj) => {
+                  cardObj = JSON.parse(cardObjJson);
+                  logger.debug(cardObjJson);
+                  var cardName = cardObj['name'];
+                  var cardImgUrls = cardObj['image_uris'];
+                  var normalUrl = cardImgUrls['normal'];
+                  bot.sendMessage({
+                        to: channelID,
+                        message: normalUrl
+                });
+                }).on('error', (e) => {
+                  logger.error('Error: ' + e);
+                });
               });
+              }
             break;
 
          }
