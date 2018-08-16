@@ -1,6 +1,7 @@
 var Discord = require('discord.io');
 var logger = require('winston');
 var auth = require('./auth.json');
+var functions = require('./functions');
 const https = require('https');
 // Configure logger settings
 logger.remove(logger.transports.Console);
@@ -44,13 +45,9 @@ bot.on('message', function (user, userID, channelID, message, evt) {
                 });
                 res.on('end', (cardObj) => {
                   cardObj = JSON.parse(cardObjJson);
-                  logger.debug(cardObjJson);
-                  var cardName = cardObj['name'];
-                  var cardImgUrls = cardObj['image_uris'];
-                  var normalUrl = cardImgUrls['normal'];
                   bot.sendMessage({
                         to: channelID,
-                        message: normalUrl
+                        message: functions.getCardImage(cardObj)
                 });
                 }).on('error', (e) => {
                   logger.error('Error: ' + e);
